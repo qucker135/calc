@@ -1,9 +1,4 @@
-#Calculator
-#by Qucker
 def calc(expr):
-	"""[Pl]Oblicza wartosc liczbowa wyrazenia algebraicznego."""
-	#print(expr)
-	
 	try:
 		return float(expr)
 	except ValueError:
@@ -21,7 +16,7 @@ def calc(expr):
 	if expr[0]=='(' and expr[-1]==')' and pom:
 		return calc(expr[1:-1])
 		
-	b=0 # a brackets-measuring variable////////////////////////PO//CO?
+	b=0 # a brackets-measuring variable
 		
 	for i in range(len(expr)-1,-1,-1):
 		
@@ -57,17 +52,17 @@ def calc(expr):
 					return calc(expr[0:i]) / calc(expr[i+1:len(expr)])
 				except ZeroDivisionError:
 					#print("Dzielenie przez zero!")
-					return None
+					return
 					pass
 	
 	b=0
 		
-	for i in range(len(expr)-1,-1,-1):
-		
+	#for i in range(len(expr)-1,-1,-1):
+	for i in range(len(expr)):	
 		#counting brackets
-		if expr[i] == ')':
+		if expr[i] == '(':
 			b+=1
-		elif expr[i] =='(':
+		elif expr[i] ==')':
 			b-=1
 		
 		if b==0: # do sth only when b==0
