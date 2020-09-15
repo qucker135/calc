@@ -1,11 +1,13 @@
 def calc(expr):
 	try:
+		if expr==None:
+			return None
 		return float(expr)
 	except ValueError:
-		#print("Holy crap!")
 		pass
 	
 	pom = True # flaga pomocnicza, sprawdza czy nawias na poczatku expr odpowiada temu na koncu
+		   # auxiliary flag, checks if initial bracket corresponds to the final one
 	for x in expr[1:-1]:
 		if x==')':
 			pom = False
@@ -28,10 +30,15 @@ def calc(expr):
 		
 		if b==0: # do sth only when b==0
 			#print(i)
-			if expr[i]=='+':
-				return calc(expr[0:i]) + calc(expr[i+1:len(expr)])
-			elif expr[i]=='-':
-				return calc(expr[0:i]) - calc(expr[i+1:len(expr)])
+			if expr[i]=='+' or expr[i]=='-':
+				x = calc(expr[0:i])
+				y = calc(expr[i+1:len(expr)])
+				if x==None or y==None:
+					return None
+				if expr[i]=='+':
+					return x + y
+				if expr[i]=='-':
+					return x - y
 					
 	b=0
 		
@@ -45,16 +52,21 @@ def calc(expr):
 		
 		if b==0: # do sth only when b==0
 			#print(i)
-			if expr[i]=='*':
-				return calc(expr[0:i]) * calc(expr[i+1:len(expr)])
-			elif expr[i]=='/':
-				try:
-					return calc(expr[0:i]) / calc(expr[i+1:len(expr)])
-				except ZeroDivisionError:
-					#print("Dzielenie przez zero!")
-					return
-					pass
-	
+			if expr[i]=='*' or expr[i]=='/':
+				x = calc(expr[0:i])
+				y = calc(expr[i+1:len(expr)])
+				if x==None or y==None:
+					return None
+				if expr[i]=='*':
+					return x * y
+				if expr[i]=='/':
+					try:
+						return calc(expr[0:i]) / calc(expr[i+1:len(expr)])
+					except ZeroDivisionError:
+						#print("Dzielenie przez zero!")
+						return None
+
+
 	b=0
 		
 	#for i in range(len(expr)-1,-1,-1):
@@ -68,7 +80,10 @@ def calc(expr):
 		if b==0: # do sth only when b==0
 			#print(i)
 			if expr[i]=='^':
-				return calc(expr[0:i]) ** calc(expr[i+1:len(expr)])		
+				x = calc(expr[0:i])
+				y = calc(expr[i+1:len(expr)])
+				if x!=None and y!=None:
+					return x ** y		
 			
 while True:
 	print(calc(input()))
