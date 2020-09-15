@@ -6,8 +6,8 @@ def calc(expr):
 	except ValueError:
 		pass
 	
-	pom = True # flaga pomocnicza, sprawdza czy nawias na poczatku expr odpowiada temu na koncu
-		   # auxiliary flag, checks if initial bracket corresponds to the final one
+	pom = True  # auxiliary flag, checks if initial bracket corresponds to the final one
+	
 	for x in expr[1:-1]:
 		if x==')':
 			pom = False
@@ -29,7 +29,6 @@ def calc(expr):
 			b-=1
 		
 		if b==0: # do sth only when b==0
-			#print(i)
 			if expr[i]=='+' or expr[i]=='-':
 				x = calc(expr[0:i])
 				y = calc(expr[i+1:len(expr)])
@@ -51,7 +50,6 @@ def calc(expr):
 			b-=1
 		
 		if b==0: # do sth only when b==0
-			#print(i)
 			if expr[i]=='*' or expr[i]=='/':
 				x = calc(expr[0:i])
 				y = calc(expr[i+1:len(expr)])
@@ -63,7 +61,6 @@ def calc(expr):
 					try:
 						return calc(expr[0:i]) / calc(expr[i+1:len(expr)])
 					except ZeroDivisionError:
-						#print("Dzielenie przez zero!")
 						return None
 
 
@@ -78,7 +75,6 @@ def calc(expr):
 			b-=1
 		
 		if b==0: # do sth only when b==0
-			#print(i)
 			if expr[i]=='^':
 				x = calc(expr[0:i])
 				y = calc(expr[i+1:len(expr)])
@@ -87,4 +83,3 @@ def calc(expr):
 			
 while True:
 	print(calc(input()))
-#help(calc)
