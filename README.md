@@ -1,2 +1,2 @@
 # calc
-Simple python calculator tool
+A simple python calculator tool
