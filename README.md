@@ -1,2 +1,2 @@
 # calc
-A simple python calculator tool
+A simple calculator tool (Python and C++)
