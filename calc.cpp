@@ -112,7 +112,12 @@ double eval(string expr){
 		if(abs(sin_h)==0.0) throw runtime_error("Hiperbolic cosecant domain error!");
 		return 1.0/sin_h;  
 	}
-		
+	//Natural logarithm
+	if(expr.length()>2 && expr.substr(0,3)=="ln(" && expr[expr.length()-1]==')'){
+		double arg = eval(expr.substr(3,expr.length()-4)); 
+		if(arg<=0.0) throw runtime_error("Logarithm domain error!");
+		return log(arg);
+	}
 	//Predefined constants
 	if(expr=="%PI") return PI;
 	if(expr=="%E" ) return E; 
