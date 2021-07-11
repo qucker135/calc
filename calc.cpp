@@ -23,6 +23,7 @@ double eval(string expr){
 		return stod(expr);
 	}
 	//check for expression in brackets
+	/*
 	if(expr[0]=='(' && expr[expr.length()-1]==')'){
 		unsigned brackets = 1;//number of open brackets minus closed brackets already checked
 		bool expr_bracket_type = true; //let's assume it is an expression of bracket type, indeed
@@ -35,21 +36,22 @@ double eval(string expr){
 		}
 		if(expr_bracket_type) return eval(expr.substr(1,expr.length()-2));
 	}
+	*/
 	unsigned brackets = 0;
 	for(unsigned i=expr.length()-1;i!=-1;i--){	//loop for adding and substracting
 		if(expr[i]==')') brackets++;
 		else if(expr[i]=='(') brackets--;
-		if(expr[i]=='+' && brackets==0 && i!=0 && i!=expr.length()-1) return eval(expr.substr(0,i)) + eval(expr.substr(i+1,expr.length()-i-1));
-		if(expr[i]=='-' && brackets==0 && i!=0 && i!=expr.length()-1) return eval(expr.substr(0,i)) - eval(expr.substr(i+1,expr.length()-i-1));
+		if(expr[i]=='+' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/) return eval(expr.substr(0,i)) + eval(expr.substr(i+1,expr.length()-i-1));
+		if(expr[i]=='-' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/) return eval(expr.substr(0,i)) - eval(expr.substr(i+1,expr.length()-i-1));
 	}
 	brackets = 0;
 	for(unsigned i=expr.length()-1;i!=-1;i--){	//loop for multiplying and dividing 
 		if(expr[i]==')') brackets++;
 		else if(expr[i]=='(') brackets--;
-		if(expr[i]=='*' && brackets==0 && i!=0 && i!=expr.length()-1) {	
+		if(expr[i]=='*' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/) {	
 			return eval(expr.substr(0,i)) * eval(expr.substr(i+1,expr.length()-i-1));
 		}
-		if(expr[i]=='/'	&& brackets==0 && i!=0 && i!=expr.length()-1) {
+		if(expr[i]=='/'	&& brackets==0 /*&& i!=0 && i!=expr.length()-1*/) {
 			double divisor = eval(expr.substr(i+1,expr.length()-i-1));
 			if(abs(divisor)==0.0) throw runtime_error("Division by zero occurred!");
 			return eval(expr.substr(0,i)) / divisor;
@@ -59,12 +61,33 @@ double eval(string expr){
 	for(unsigned i=0;i<expr.length();i++){	//loop for powering
 		if(expr[i]=='(') brackets++;
 		else if(expr[i]==')') brackets--;
-		if(expr[i]=='^' && brackets==0 && i!=0 && i!=expr.length()-1){
+		if(expr[i]=='^' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/){
 			double result = pow(eval(expr.substr(0,i)), eval(expr.substr(i+1,expr.length()-i-1)));	 
 			if(isnan(result)) throw runtime_error("Powering error!");
 			return result;
 		}	
-	}	
+	}
+	if(expr[0]=='(' && expr[expr.length()-1]==')'){
+		return eval(expr.substr(1,expr.length()-2));	
+	}
+	if(expr.length()>3 && expr.substr(0,4)=="sin(" && expr[expr.length()-1]==')'){
+		return sin(eval(expr.substr(4,expr.length()-5)));
+	}
+	if(expr.length()>3 && expr.substr(0,4)=="cos(" && expr[expr.length()-1]==')'){
+		return cos(eval(expr.substr(4,expr.length()-5)));
+	}
+	if(expr.length()>3 && expr.substr(0,4)=="tan(" && expr[expr.length()-1]==')'){	
+		double cosinus = cos(eval(expr.substr(4,expr.length()-5)));
+		if(abs(cosinus)==0.0) throw runtime_error("Tangent domain error!"); 
+		return tan(eval(expr.substr(4,expr.length()-5)));
+	}
+	if(expr.length()>3 && expr.substr(0,4)=="cot(" && expr[expr.length()-1]==')'){	
+		double sinus = sin(eval(expr.substr(4,expr.length()-5)));
+		if(abs(sinus)==0.0) throw runtime_error("Cotangent domain error!"); 
+		return cos(eval(expr.substr(4,expr.length()-5)))/sinus;
+	}
+
+
 	throw runtime_error("Parsing error!");
 
 }
@@ -91,7 +114,8 @@ int main(){
 	string bfr = "";
 	do{
 		cout<<"calc>";
-		cin>>bfr;
+		//cin>>bfr;
+		getline(cin,bfr);
 		if(bfr=="!end") break;
 		try{
 			double result = eval(bfr);
