@@ -1,6 +1,9 @@
 #include <iostream>
 #include <cmath>
 
+#define PI 3.14159265358979323846
+#define E  2.71828182845904523536
+
 using namespace std;
 
 bool is_numeric(string expr){
@@ -22,36 +25,21 @@ double eval(string expr){
 	if(is_numeric(expr)){
 		return stod(expr);
 	}
-	//check for expression in brackets
-	/*
-	if(expr[0]=='(' && expr[expr.length()-1]==')'){
-		unsigned brackets = 1;//number of open brackets minus closed brackets already checked
-		bool expr_bracket_type = true; //let's assume it is an expression of bracket type, indeed
-		for(unsigned i=1;i<expr.length()-1;i++){
-			if(expr[i]=='(') brackets++;
-			else if(expr[i]==')') brackets--;
-			if(brackets==0){
-				expr_bracket_type = false;
-			}
-		}
-		if(expr_bracket_type) return eval(expr.substr(1,expr.length()-2));
-	}
-	*/
 	unsigned brackets = 0;
 	for(unsigned i=expr.length()-1;i!=-1;i--){	//loop for adding and substracting
 		if(expr[i]==')') brackets++;
 		else if(expr[i]=='(') brackets--;
-		if(expr[i]=='+' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/) return eval(expr.substr(0,i)) + eval(expr.substr(i+1,expr.length()-i-1));
-		if(expr[i]=='-' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/) return eval(expr.substr(0,i)) - eval(expr.substr(i+1,expr.length()-i-1));
+		if(expr[i]=='+' && brackets==0 ) return eval(expr.substr(0,i)) + eval(expr.substr(i+1,expr.length()-i-1));
+		if(expr[i]=='-' && brackets==0 ) return eval(expr.substr(0,i)) - eval(expr.substr(i+1,expr.length()-i-1));
 	}
 	brackets = 0;
 	for(unsigned i=expr.length()-1;i!=-1;i--){	//loop for multiplying and dividing 
 		if(expr[i]==')') brackets++;
 		else if(expr[i]=='(') brackets--;
-		if(expr[i]=='*' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/) {	
+		if(expr[i]=='*' && brackets==0 ) {	
 			return eval(expr.substr(0,i)) * eval(expr.substr(i+1,expr.length()-i-1));
 		}
-		if(expr[i]=='/'	&& brackets==0 /*&& i!=0 && i!=expr.length()-1*/) {
+		if(expr[i]=='/'	&& brackets==0 ) {
 			double divisor = eval(expr.substr(i+1,expr.length()-i-1));
 			if(abs(divisor)==0.0) throw runtime_error("Division by zero occurred!");
 			return eval(expr.substr(0,i)) / divisor;
@@ -61,15 +49,18 @@ double eval(string expr){
 	for(unsigned i=0;i<expr.length();i++){	//loop for powering
 		if(expr[i]=='(') brackets++;
 		else if(expr[i]==')') brackets--;
-		if(expr[i]=='^' && brackets==0 /*&& i!=0 && i!=expr.length()-1*/){
+		if(expr[i]=='^' && brackets==0 ){
 			double result = pow(eval(expr.substr(0,i)), eval(expr.substr(i+1,expr.length()-i-1)));	 
 			if(isnan(result)) throw runtime_error("Powering error!");
 			return result;
 		}	
 	}
+	//check for expression in brackets
 	if(expr[0]=='(' && expr[expr.length()-1]==')'){
 		return eval(expr.substr(1,expr.length()-2));	
 	}
+	//Functions
+	//Trygonometry
 	if(expr.length()>3 && expr.substr(0,4)=="sin(" && expr[expr.length()-1]==')'){
 		return sin(eval(expr.substr(4,expr.length()-5)));
 	}
@@ -86,7 +77,45 @@ double eval(string expr){
 		if(abs(sinus)==0.0) throw runtime_error("Cotangent domain error!"); 
 		return cos(eval(expr.substr(4,expr.length()-5)))/sinus;
 	}
-
+	if(expr.length()>3 && expr.substr(0,4)=="sec(" && expr[expr.length()-1]==')'){
+		double cosinus = cos(eval(expr.substr(4,expr.length()-5)));
+		if(abs(cosinus)==0.0) throw runtime_error("Secant domain error!"); 
+		return 1.0/cosinus;
+	}
+	if(expr.length()>3 && expr.substr(0,4)=="csc(" && expr[expr.length()-1]==')'){
+		double sinus = sin(eval(expr.substr(4,expr.length()-5)));
+		if(abs(sinus)==0.0) throw runtime_error("Cosecant domain error!"); 
+		return 1.0/sinus;
+	}
+	//Hiperbolic functions
+	if(expr.length()>4 && expr.substr(0,5)=="sinh(" && expr[expr.length()-1]==')'){
+		return sinh(eval(expr.substr(5,expr.length()-6)));	
+	}
+	if(expr.length()>4 && expr.substr(0,5)=="cosh(" && expr[expr.length()-1]==')'){
+		return cosh(eval(expr.substr(5,expr.length()-6)));	
+	}
+	if(expr.length()>4 && expr.substr(0,5)=="tanh(" && expr[expr.length()-1]==')'){
+		return tanh(eval(expr.substr(5,expr.length()-6)));	
+	}
+	if(expr.length()>4 && expr.substr(0,5)=="coth(" && expr[expr.length()-1]==')'){
+		double tan_h = tanh(eval(expr.substr(5,expr.length()-6)));	
+		if(abs(tan_h)==0.0) throw runtime_error("Hiperbolic tangent domain error!");
+		return 1.0/tan_h;  
+	}
+	if(expr.length()>4 && expr.substr(0,5)=="sech(" && expr[expr.length()-1]==')'){
+		double cos_h = cosh(eval(expr.substr(5,expr.length()-6)));	
+		if(abs(cos_h)==0.0) throw runtime_error("Hiperbolic secant domain error!");
+		return 1.0/cos_h;  
+	}
+	if(expr.length()>4 && expr.substr(0,5)=="csch(" && expr[expr.length()-1]==')'){
+		double sin_h = sinh(eval(expr.substr(5,expr.length()-6)));	
+		if(abs(sin_h)==0.0) throw runtime_error("Hiperbolic cosecant domain error!");
+		return 1.0/sin_h;  
+	}
+		
+	//Predefined constants
+	if(expr=="%PI") return PI;
+	if(expr=="%E" ) return E; 
 
 	throw runtime_error("Parsing error!");
 
